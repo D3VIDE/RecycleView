@@ -1,7 +1,9 @@
 package com.example.recycleview
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         siapkanData()
         tambahkanData()
         tampilkanData()
+
+
     }
 
     fun siapkanData(){
@@ -45,8 +49,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tampilkanData(){
-        _tvWayang.layoutManager = StaggeredGridLayoutManager(2,
-            LinearLayoutManager.VERTICAL)
-        _tvWayang.adapter = adapterRecView(arWayang)
+        _tvWayang.layoutManager = LinearLayoutManager(this)
+        val adapterWayang = adapterRecView(arWayang)
+        _tvWayang.adapter = adapterWayang
+
+        adapterWayang.setOnItemClickCallback(object : adapterRecView.OnItemClickCallback{
+            override fun onItemClicked(data: dcWayang) {
+                val intent = Intent(this@MainActivity, detWayang::class.java)
+                intent.putExtra("kirimData",data)
+                startActivity(intent)
+            }
+        })
     }
 }

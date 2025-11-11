@@ -2,8 +2,10 @@ package com.example.recycleview
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var _nama:Array<String>
@@ -43,7 +45,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tampilkanData(){
-        _tvWayang.layoutManager = LinearLayoutManager(this)
+        _tvWayang.layoutManager = StaggeredGridLayoutManager(2,
+            LinearLayoutManager.VERTICAL)
         _tvWayang.adapter = adapterRecView(arWayang)
     }
 }

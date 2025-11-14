@@ -2,33 +2,63 @@ package com.example.recycleview
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var _nama: MutableList<String>
-    private lateinit var _karakter: MutableList<String>
-    private lateinit var _deskripsi: MutableList<String>
-    private lateinit var _gambar: MutableList<String>
-
+    private var _nama: MutableList<String> = emptyList<String>().toMutableList()
+    private var _karakter: MutableList<String> = emptyList<String>().toMutableList()
+    private var _deskripsi: MutableList<String> = emptyList<String>().toMutableList()
+    private var _gambar: MutableList<String> = emptyList<String>().toMutableList()
     private var arWayang = arrayListOf<dcWayang>()
+
+    private lateinit var sp: SharedPreferences
     private lateinit var _tvWayang : RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        sp = getSharedPreferences("dataSP", MODE_PRIVATE)
         _tvWayang = findViewById<RecyclerView>(R.id.tvWayang)
-        siapkanData()
-        tambahkanData()
+
+        bacaDataDariSP()
+
+
+        if (arWayang.size == 0) {
+            siapkanData()
+            tambahkanData()
+        } else {
+            // Jika ada data di SP, isi ke list untuk operasi hapus
+            arWayang.forEach { wayang ->
+                _nama.add(wayang.nama)
+                _gambar.add(wayang.foto)
+                _deskripsi.add(wayang.deskripsi)
+                _karakter.add(wayang.karakter)
+            }
+        }
+
         tampilkanData()
 
+    }
 
+    private fun bacaDataDariSP() {
+        val gson = Gson()
+        val json = sp.getString("spWayang", "")
+
+        if (!json.isNullOrEmpty()) {
+            val type = com.google.gson.reflect.TypeToken.getParameterized(ArrayList::class.java, dcWayang::class.java).type
+            val dataDariSP = gson.fromJson<ArrayList<dcWayang>>(json, type)
+            arWayang.clear()
+            arWayang.addAll(dataDariSP)
+        }
     }
 
     fun siapkanData(){
@@ -39,15 +69,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tambahkanData(){
-        arWayang.clear()
-        for(position in _nama.indices){
-            val data = dcWayang(
-                _gambar[position],
-                _nama[position],
-                _karakter[position],
-                _deskripsi[position]
-            )
-            arWayang.add(data)
+        val gson = Gson()
+        sp.edit {
+            arWayang.clear()
+
+            for (position in _nama.indices) {
+                val data = dcWayang(
+                    _gambar[position],
+                    _nama[position],
+                    _karakter[position],
+                    _deskripsi[position]
+                )
+                arWayang.add(data)
+            }
+
+            val json = gson.toJson(arWayang)
+            putString("spWayang", json)
         }
     }
 

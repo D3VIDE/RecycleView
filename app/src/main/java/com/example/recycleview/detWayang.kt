@@ -11,10 +11,9 @@ import com.squareup.picasso.Picasso
 
 class detWayang : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        private lateinit var _detFotoWayang: ImageView
-        private lateinit var _detNamaWayang: TextView
-        private lateinit var _detDetailWayang: TextView
+         lateinit var _detFotoWayang: ImageView
+         lateinit var _detNamaWayang: TextView
+         lateinit var _detDetailWayang: TextView
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
